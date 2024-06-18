@@ -1,0 +1,15 @@
+.idea
+.swap
+venv
+.*~
+.DS_Store
+.vscode
+__MACOSX
+*.ipynb
+__pycache__
+db.sqlite
+alembic.ini
+alembic
+build
+dist
+hard_connect.egg-info
