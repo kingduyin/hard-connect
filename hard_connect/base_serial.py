@@ -51,7 +51,10 @@ class BaseSerial(BaseConn):
             raise e
 
     def disconnect(self):
-        self.conn and self.conn.close()
+        if self.conn and self.conn.isOpen():
+            self.conn.flushOutput()
+            self.conn.close()
+            self.conn = None
 
     @abstractmethod
     def send(self, send_str: str):
@@ -128,11 +131,15 @@ class SerialConn(BaseSerial):
         bytes_end_of_msg = self.end_of_msg.encode()
         start_time = time.time()
 
-        while self.conn:
-            if self.is_read_line:
-                _bytes = self.conn.readline()
-            else:
-                _bytes = self.conn.read(self.length if length is None else length)
+        while self.conn.is_open:
+            try:
+                if self.is_read_line:
+                    _bytes = self.conn.readline()
+                else:
+                    _bytes = self.conn.read(self.length if length is None else length)
+            except serial.SerialException as e:
+                self.logger.error(f"Serial {self.device} error: {e}  serial open state: {self.conn.is_open}")
+                break
 
             self.receive_generator and self.receive_generator.send(_bytes)
             len(_bytes) and self.put_queue(_bytes)

@@ -44,6 +44,7 @@ class BaseSocket(BaseConn):
 
     def disconnect(self):
         self.conn and self.conn.close()
+        self.conn = None
 
     @abstractmethod
     def send(self, send_str: Union[str, bytes]):
