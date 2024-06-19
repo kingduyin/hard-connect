@@ -6,7 +6,7 @@
 @Date    ：2024/6/11 12:49 
 """
 import logging
-from typing import Union
+from typing import Union, Generator
 from collections import deque
 from abc import ABC, abstractmethod
 
@@ -20,7 +20,8 @@ class BaseConn(ABC):
             timeout: int = 1,
             end_of_msg=None,
             keep_line_feed=False,
-            logging_level=logging.INFO
+            logging_level=logging.INFO,
+            receive_generator: Generator = None,
     ):
         """
         Base class for communication, including serial, socket, etc.
@@ -29,8 +30,9 @@ class BaseConn(ABC):
         :param queue_max_length:   # queue max length, default: 500
         :param timeout:            # Send and receive timeout, default: 1s
         :param end_of_msg:         # special line data，if set, discard this data
-        :param keep_line_feed:     #  Write queue data to preserve line breaks  default: False
-        :param logging_level:      #  Logging level, default: logging.INFO, DEBUG: write file and console, INFo: write console  # noqa
+        :param keep_line_feed:     # Write queue data to preserve line breaks  default: False
+        :param logging_level:      # Logging level, default: logging.INFO, DEBUG: write file and console, INFo: write console  # noqa
+        :param receive_generator:  # Generator for receiving data, default: None, if set, use this generator to receive data
         """
         self.conn = None
         self.send_lf = send_lf
@@ -41,6 +43,7 @@ class BaseConn(ABC):
         self.queue = DequeWithMaxLen(queue_max_length)
         self.logger = logging.getLogger("hard_conn")
         self.logger.setLevel(logging_level)
+        self.receive_generator = receive_generator
         super().__init__()
 
     def __del__(self):
@@ -48,6 +51,7 @@ class BaseConn(ABC):
         close socket connection when object is destroyed
         :return:
         """
+        self.receive_generator and self.receive_generator.close()
         self.disconnect()
 
     def __enter__(self):
@@ -55,6 +59,7 @@ class BaseConn(ABC):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.receive_generator and self.receive_generator.close()
         self.disconnect()
 
     @abstractmethod

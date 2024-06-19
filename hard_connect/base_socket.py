@@ -37,8 +37,8 @@ class BaseSocket(BaseConn):
     def connect(self):
         try:
             self.conn: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.conn.connect((self.ip, self.port))
             self.timeout and self.conn.settimeout(self.timeout)
+            self.conn.connect((self.ip, self.port))
         except Exception as e:
             raise e
 
@@ -139,6 +139,7 @@ class SocketConn(BaseSocket):
                 bytes_recv_data = self.conn.recv(self.length if length is None else length)
                 socket_data += bytes_recv_data
 
+                self.receive_generator and self.receive_generator.send(bytes_recv_data)
                 # send command and waiting for server response data
                 if receive_data is not None:
                     receive_data += bytes_recv_data

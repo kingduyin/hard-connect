@@ -111,11 +111,11 @@ class SerialConn(BaseSerial):
 
         except Exception as e:
             self.logger.error(f"send serial {self.device} error: {e}")
-
+    
     def receive(
             self,
             length: int = None,
-            receive_data: bytes = None
+            receive_data: bytes = None,
     ) -> Union[bytes, None]:
         """
         receive message from serial port, Default length is 1024
@@ -133,7 +133,8 @@ class SerialConn(BaseSerial):
                     _bytes = self.conn.readline()
                 else:
                     _bytes = self.conn.read(self.length if length is None else length)
-
+               
+                self.receive_generator and self.receive_generator.send(_bytes)
                 len(_bytes) and self.put_queue(_bytes)
                 # send command and waiting for server response data
                 if receive_data is not None and len(bytes):
