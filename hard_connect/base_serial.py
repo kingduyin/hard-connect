@@ -137,8 +137,10 @@ class SerialConn(BaseSerial):
                 self.receive_generator and self.receive_generator.send(_bytes)
                 len(_bytes) and self.put_queue(_bytes)
                 # send command and waiting for server response data
-                if receive_data is not None and len(bytes):
-                    receive_data += _bytes
+                if receive_data is not None:
+                    if len(_bytes):
+                        receive_data += _bytes
+
                     if (start_time is not None
                             and (bytes_end_of_msg in receive_data
                                  or time.time() - start_time > self.timeout)
