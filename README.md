@@ -131,8 +131,9 @@ def socket_connect_set_log_level_and_log_filename():
     hard.send('>vcm upload(on)')
 ```
 
-## v0.2.6
+## v0.2.7
 add generator receive
+add log filename and update log load
 fix socket connect timeout
 
 ## v0.2.5
