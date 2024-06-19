@@ -48,7 +48,26 @@ with HardConnect(
         conn_type='socket', ip="192.168.0.100", port=60000, 
     ) as socket5001:
         socket5001.start()
+    
+
+# generator receive data
+# 需要直接处理返回的数据，可以使用生成器接收数据
+def receive_generator():
+    while True:
+        data = yield
+        print('Data:', data)
+
+
+recv_gen = receive_generator()
+recv_gen.send(None)
+hard1 = HardConnect(
+    conn_type='socket', ip='192.168.0.100', port=5001,  receive_generator=recv_gen
+)
 ```
+
+## v0.2.6
+add generator receive
+fix socket connect timeout
 
 ## v0.2.5
 add log config and del print console

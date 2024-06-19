@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='hard_connect',
-    version='0.2.5',
+    version='0.2.6',
     packages=find_packages(),
     install_requires=[
         # 依赖列表
