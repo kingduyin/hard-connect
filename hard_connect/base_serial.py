@@ -126,30 +126,28 @@ class SerialConn(BaseSerial):
         :return:
         """
         bytes_end_of_msg = self.end_of_msg.encode()
-        start_time = time.time() if receive_data is not None else None
-        while True:
-            try:
-                if self.is_read_line:
-                    _bytes = self.conn.readline()
-                else:
-                    _bytes = self.conn.read(self.length if length is None else length)
-               
-                self.receive_generator and self.receive_generator.send(_bytes)
-                len(_bytes) and self.put_queue(_bytes)
-                # send command and waiting for server response data
-                if receive_data is not None:
-                    if len(_bytes):
-                        receive_data += _bytes
+        start_time = time.time()
 
-                    if (start_time is not None
-                            and (bytes_end_of_msg in receive_data
-                                 or time.time() - start_time > self.timeout)
-                    ):  # noqa
-                        return receive_data
-            except Exception as e:
-                self.logger.error('Serial Exception:', e)
-                _bytes = b''
+        while self.conn:
+            if self.is_read_line:
+                _bytes = self.conn.readline()
+            else:
+                _bytes = self.conn.read(self.length if length is None else length)
+
+            self.receive_generator and self.receive_generator.send(_bytes)
+            len(_bytes) and self.put_queue(_bytes)
+
+            # send command and waiting for server response data
+            if receive_data is None:
                 continue
+
+            # receive single data
+            if len(_bytes):
+                receive_data += _bytes
+
+            if (bytes_end_of_msg in receive_data
+                    or time.time() - start_time > self.timeout):  # noqa
+                return receive_data
 
     def send_receive(self, send_str: Union[str, bytes], receive_length: int = None) -> str:
         """

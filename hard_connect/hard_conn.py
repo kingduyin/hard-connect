@@ -80,11 +80,14 @@ def hard_conn(
     Save row data to queue.
 
     Optional arguments (Other parameters):
-    logging_level:  Logging level, default: logging.INFO, DEBUG: write file and console, INFo: write console
     keep_line_feed: Write queue data to preserve line breaks  default: False
     send_lf:        end data with additional terminator. Default \r\n
     receive_lf:     receive data line separator, Default \r\n
     timeout:        timeout, default: 1s,
+    is_read_line:   Serial read row, default: False. call readline() function
+    logging_filename: Logging file name, default: None, if set, write log to file. If not set use default log setting
+    logging_level:  Logging level, default: logging.INFO, DEBUG: write file and console, INFo: write console
+    receive_generator: Generator for receiving data, default: None, if set, use this generator to receive data
 
     For example function:
         send:
