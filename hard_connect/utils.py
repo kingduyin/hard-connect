@@ -6,12 +6,14 @@
 @Date    ：2024/6/11 12:49 
 """
 import logging
+import logging.config
 from typing import Union, Generator
 from collections import deque
 from abc import ABC, abstractmethod
 
 
 class BaseConn(ABC):
+
     def __init__(
             self,
             send_lf='\r\n',
@@ -21,6 +23,7 @@ class BaseConn(ABC):
             end_of_msg=None,
             keep_line_feed=False,
             logging_level=logging.INFO,
+            logging_filename=None,
             receive_generator: Generator = None,
     ):
         """
@@ -32,6 +35,7 @@ class BaseConn(ABC):
         :param end_of_msg:         # special line data，if set, discard this data
         :param keep_line_feed:     # Write queue data to preserve line breaks  default: False
         :param logging_level:      # Logging level, default: logging.INFO, DEBUG: write file and console, INFo: write console  # noqa
+        :param logging_filename:   # Logging file name, default: None, if set, write log to file. If not set use default log setting
         :param receive_generator:  # Generator for receiving data, default: None, if set, use this generator to receive data
         """
         self.conn = None
@@ -41,9 +45,11 @@ class BaseConn(ABC):
         self.keep_line_feed = keep_line_feed
         self.timeout = timeout
         self.queue = DequeWithMaxLen(queue_max_length)
+        self.logging_filename = logging_filename
+        self.receive_generator = receive_generator
+        self.init_logging()
         self.logger = logging.getLogger("hard_conn")
         self.logger.setLevel(logging_level)
-        self.receive_generator = receive_generator
         super().__init__()
 
     def __del__(self):
@@ -61,6 +67,16 @@ class BaseConn(ABC):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.receive_generator and self.receive_generator.close()
         self.disconnect()
+
+    def init_logging(self):
+        """
+        init logging
+        :return:
+        """
+        from hard_connect.log import DEFAULT_LOGGING
+        if self.logging_filename:
+            DEFAULT_LOGGING['handlers']['file']['filename'] = self.logging_filename
+        logging.config.dictConfig(DEFAULT_LOGGING)
 
     @abstractmethod
     def connect(self):

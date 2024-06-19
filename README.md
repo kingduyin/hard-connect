@@ -63,6 +63,72 @@ recv_gen.send(None)
 hard1 = HardConnect(
     conn_type='socket', ip='192.168.0.100', port=5001,  receive_generator=recv_gen
 )
+
+
+# Example
+def receive_generator():
+    while True:
+        data = yield
+        print('Data:', data)
+
+
+def socket_send_eg():
+    """
+    Example of sending data using socket
+    :return:
+    """
+    hard = HardConnect(conn_type='socket', ip='127.0.0.1', port=60000)
+    hard.send('>vcm upload(on)')
+
+
+def socket_send_receive_eg():
+    """
+    Example of sending and receiving data using socket
+    :return:
+    """
+    hard = HardConnect(conn_type='socket', ip='127.0.0.1', port=60000)
+    receive_data = hard.send_receive('>vcm upload(on)')
+    print(receive_data)
+
+
+def socket_receive_data_with_threading():
+    """
+    Example of receiving data using socket with threading
+
+    Receive data and put it in a fifo queue
+    :return:
+    """
+    hard = HardConnect(conn_type='socket', ip='127.0.0.1', port=60000)
+    hard.start()
+
+
+def socket_receive_data_with_coroutine():
+    """
+    Example of receiving data using socket with coroutine
+
+    Receive data and send to a generator
+    :return:
+    """
+    recv = receive_generator()
+    next(recv)
+    hard = HardConnect(conn_type='socket', ip='127.0.0.1', port=60000, receive_generator=recv)
+
+
+def socket_connect_set_log_level_and_log_filename():
+    """
+    Log config is log.py file
+
+    Default log level is logging.INFO
+    logging.INFO: use StreamHandler, log to console
+    logging.DEBUG: use FileHandler, log to file and console, file name is hard_connect.log in the current directory
+    :return:
+    """
+    hard = HardConnect(
+        conn_type='socket', ip='127.0.0.1', port=60000,
+        logging_level=logging.DEBUG,
+        logging_filename='/tmp/hard_conn.log'
+    )
+    hard.send('>vcm upload(on)')
 ```
 
 ## v0.2.6

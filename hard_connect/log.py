@@ -1,8 +1,4 @@
-import logging.config  # needed when logging_config doesn't start with logging.config
-from pathlib import Path
 
-
-CURRENT_DIR = Path(__file__).resolve().parent
 
 DEFAULT_LOGGING = {
     'version': 1,
@@ -28,7 +24,7 @@ DEFAULT_LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': f'{CURRENT_DIR}/hard_conn.log',  # log file path
+            'filename': 'hard_conn.log',  # log file path
             'maxBytes': 1024 * 1024 * 50,  # 50 MB
             'backupCount': 5,
             'formatter': 'verbose',
@@ -44,4 +40,4 @@ DEFAULT_LOGGING = {
 }
 
 
-logging.config.dictConfig(DEFAULT_LOGGING)
+
