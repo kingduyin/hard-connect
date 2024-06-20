@@ -20,7 +20,7 @@ class BaseConn(ABC):
             receive_lf='\r\n',
             queue_max_length=500,
             timeout: int = 1,
-            end_of_msg=None,
+            end_of_msg='🔚',
             keep_line_feed=False,
             logging_level=logging.INFO,
             logging_filename=None,
@@ -32,7 +32,7 @@ class BaseConn(ABC):
         :param receive_lf:         # receive line feed, default: '\r\n'
         :param queue_max_length:   # queue max length, default: 500
         :param timeout:            # Send and receive timeout, default: 1s
-        :param end_of_msg:         # special line data，if set, discard this data
+        :param end_of_msg:         #  special tag data, Set the tag end_of_msg, which is not stored in the queue. Default  🔚
         :param keep_line_feed:     # Write queue data to preserve line breaks  default: False
         :param logging_level:      # Logging level, default: logging.INFO, DEBUG: write file and console, INFo: write console  # noqa
         :param logging_filename:   # Logging file name, default: None, if set, write log to file. If not set use default log setting
