@@ -28,7 +28,17 @@
     - `HardConnSerial` 线程方式实现数据接收
     - `hard_conn` 工厂方法生成实例  在使用中使用该方法就可以
 
+```shell
+# 安装
+pip install hard-connect
+
+# 更新
+pip install --upgrade hard-connect
+```
+
 ```python 
+from hard_connect import HardConnect
+
 # send 命令有配置send_lf参数 ，send的字符串后面会增加结束符再发送到硬件。默认参数是\r\n
 # socket连接, 指定log级别，默认是INFO
 import logging
@@ -130,6 +140,11 @@ def socket_connect_set_log_level_and_log_filename():
     )
     hard.send('>vcm upload(on)')
 ```
+
+## v0.2.11
+optimze disconnect/instance objects
+fix serial send_receive bug
+
 
 ## v0.2.7
 add generator receive

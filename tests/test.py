@@ -8,7 +8,7 @@
 import time
 import logging
 from functools import wraps
-from hard_connect.hard_conn import hard_conn as HardConnect
+from hard_connect.hard_conn import HardConnect
 
 
 def coroutine(func):
@@ -86,23 +86,32 @@ def socket_connect_set_log_level_and_log_filename():
 
 
 def test_conn():
-    # hard = HardConnect(
-    #     conn_type='socket', ip='127.0.0.1', port=60000,
-    #     # logging_filename='/tmp/hard_conn.log'
-    # )
+    hard = HardConnect(
+        conn_type='socket', ip='127.0.0.1', port=60000,
+        # logging_filename='/tmp/hard_conn.log'
+    )
 
     # hard = HardConnect(conn_type='socket', ip='127.0.0.1', port=60000, logging_level=logging.INFO)
     # hard = HardConnect(conn_type='socket', ip='192.168.0.100', port=5000, logging_level=logging.INFO)
     # hard1 = HardConnect(
     #     conn_type='socket', ip='192.168.0.100', port=5001,  receive_generator=recv_gen
     # )
+    # hard = HardConnect(
+    #     conn_type='serial', device='/dev/tty.usbmodem1402',
+    #     baud_rate=115200, is_read_line=True
+    # )
+    # hard.start()
+
     hard = HardConnect(
-        conn_type='serial', device='/dev/tty.usbmodem1402',
-        baud_rate=115200, is_read_line=True
+        conn_type='serial', device='/dev/tty.usbserial-120',
+        baud_rate=115200, length=120
     )
     hard.start()
-
-    data = hard.send_receive('>vcm force(10)')
+    time.sleep(3)
+    hard.disconnect()
+    del hard
+    # import gc
+    # gc.collect()
     # print('----', hard.send_receive('>vcm force(10)'))
     time.sleep(1)
     # print('----', hard.send_receive('>vcm force(10)'))

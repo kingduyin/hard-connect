@@ -7,13 +7,13 @@
 """
 import time
 import unittest
-from hard_conn import hard_conn
+from hard_connect import HardConnect
 
 
 class TestSerial(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        self.hard = hard_conn(conn_type='serial', device='/dev/tty.usbserial-110')
+        self.hard = HardConnect(conn_type='serial', device='/dev/tty.usbserial-110')
         self.hard.start()
         super().__init__(*args, **kwargs)
 

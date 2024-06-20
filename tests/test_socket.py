@@ -7,13 +7,13 @@
 """
 import time
 import unittest
-from hard_conn import hard_conn
+from hard_connect import HardConnect
 
 
 class TestSocket(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        self.hard = hard_conn(conn_type='socket', ip='192.168.0.100', port=5000)
+        self.hard = HardConnect(conn_type='socket', ip='192.168.0.100', port=5000)
         self.hard.start()
         super().__init__(*args, **kwargs)
 

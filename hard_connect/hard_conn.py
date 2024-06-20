@@ -64,54 +64,58 @@ class HardConnSerial(SerialConn, Thread):
         self.receive()
 
 
-def hard_conn(
+class HardConnect:
+
+    def __new__(
+        cls,
         conn_type,
         ip=None,
         port=None,
         device=None,
         baud_rate=115200,
-        end_of_msg='🔚',
         **kwargs
-):
-    """
-    Connect hard with socket or serial.
-    Use the same package to communicate.
-    Developers do not need to worry about connections and disconnections， etc.
-    Save row data to queue.
+    ):
+        """
+        Connect hard with socket or serial.
+        Use the same package to communicate.
+        Developers do not need to worry about connections and disconnections， etc.
+        Save row data to queue.
 
-    Optional arguments (Other parameters):
-    keep_line_feed: Write queue data to preserve line breaks  default: False
-    send_lf:        end data with additional terminator. Default \r\n
-    receive_lf:     receive data line separator, Default \r\n
-    timeout:        timeout, default: 1s,
-    is_read_line:   Serial read row, default: False. call readline() function
-    logging_filename: Logging file name, default: None, if set, write log to file. If not set use default log setting
-    logging_level:  Logging level, default: logging.INFO, DEBUG: write file and console, INFo: write console
-    receive_generator: Generator for receiving data, default: None, if set, use this generator to receive data
+        Optional arguments (Other parameters/kwargs):
+            keep_line_feed: Write queue data to preserve line breaks  default: False
+            send_lf:        end data with additional terminator. Default \r\n
+            receive_lf:     receive data line separator, Default \r\n
+            timeout:        timeout, default: 1s,
+            is_read_line:   Serial read row, default: False. call readline() function
+            logging_filename: Logging file name, default: None, if set, write log to file. If not set use default log setting
+            logging_level:  Logging level, default: logging.INFO, DEBUG: write file and console, INFo: write console
+            receive_generator: Generator for receiving data, default: None, if set, use this generator to receive data
+            end_of_msg='🔚',  # special tag data, Set the tag end_of_msg, which is not stored in the queue. Default  🔚
 
-    For example function:
-        send:
-        receive:
+        Functions:
+            send:
+            receive:
+            send_receive:
+            ...
 
-    :param conn_type:     # hard connect is socket or serial, Only supports socket serial
-    :param ip:            # ip address, if conn_type is socket, ip is necessary
-    :param port:          # port, if conn_type is socket, port is necessary
-    :param device:        # device, if conn_type is serial, device is necessary
-    :param baud_rate:     # baud rate, if conn_type is serial, baud rate is necessary. Default: 115200
+        :param conn_type:     # hard connect is socket or serial, Only supports socket serial
+        :param ip:            # ip address, if conn_type is socket, ip is necessary
+        :param port:          # port, if conn_type is socket, port is necessary
+        :param device:        # device, if conn_type is serial, device is necessary
+        :param baud_rate:     # baud rate, if conn_type is serial, baud rate is necessary. Default: 115200
 
-    :param end_of_msg     # special tag data, Set the tag end_of_msg, which is not stored in the queue. Default  🔚
-                          # IF end_of_msg set None or '', No processing of data
-                          # The server returns the end of the data after sending the command.
-                          # It has no special meaning and is not stored in the queue.
-    :param kwargs:        # Other parameters
-    :return:
-    """
-    assert conn_type in ['socket', 'serial'], 'conn_type must be socket or serial'
+        :param end_of_msg     # special tag data, Set the tag end_of_msg, which is not stored in the queue. Default  🔚
+                                IF end_of_msg set None or '', No processing of data
+                                The server returns the end of the data after sending the command.
+                                It has no special meaning and is not stored in the queue.
+        :param kwargs:        # Other parameters
+        :return:              # HardConnSock or HardConnSerial instance
+        """
 
-    kwargs['end_of_msg'] = end_of_msg
-    if conn_type == 'socket':
-        return HardConnSock(ip, port, **kwargs)
-    elif conn_type == 'serial':
-        return HardConnSerial(device, baud_rate, **kwargs)
-
-
+        assert conn_type in ['socket', 'serial'], 'conn_type must be socket or serial'
+        if conn_type == 'socket':
+            return HardConnSock(ip, port, **kwargs)
+        elif conn_type == 'serial':
+            return HardConnSerial(device, baud_rate, **kwargs)
+        else:
+            raise ValueError('conn_type must be socket or serial')
