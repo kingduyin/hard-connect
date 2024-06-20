@@ -85,6 +85,14 @@ def socket_connect_set_log_level_and_log_filename():
     hard.send('>vcm upload(on)')
 
 
+def modbus_tcp_send_eg():
+    """
+    Example of sending data using modbus tcp
+    :return:
+    """
+    hard = HardConnect(conn_type='modbus_tcp', ip='address', port=502)
+    pass
+
 def test_conn():
     hard = HardConnect(
         conn_type='socket', ip='127.0.0.1', port=60000,

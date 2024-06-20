@@ -141,6 +141,9 @@ def socket_connect_set_log_level_and_log_filename():
     hard.send('>vcm upload(on)')
 ```
 
+## v0.3.0
+add modbustcp
+
 ## v0.2.11
 optimze disconnect/instance objects
 fix serial send_receive bug

@@ -9,11 +9,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='hard_connect',
-    version='0.2.11',
+    version='0.3.0',
     packages=find_packages(),
     install_requires=[
         # 依赖列表
         'pyserial==3.5',
+        'pymodbus==3.6.8',
     ],
     author='kingduyin',
     author_email='kingduyin@gmail.com',

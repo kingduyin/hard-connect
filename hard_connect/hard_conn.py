@@ -8,6 +8,7 @@
 from threading import Thread
 from hard_connect.base_socket import SocketConn
 from hard_connect.base_serial import SerialConn
+from hard_connect.base_modbus import ModbusTcpClientConn
 
 
 class HardConnSock(SocketConn, Thread):
@@ -76,7 +77,7 @@ class HardConnect:
         **kwargs
     ):
         """
-        Connect hard with socket or serial.
+        Connect hard with socket, serial, modbus_tcp.
         Use the same package to communicate.
         Developers do not need to worry about connections and disconnections， etc.
         Save row data to queue.
@@ -112,10 +113,12 @@ class HardConnect:
         :return:              # HardConnSock or HardConnSerial instance
         """
 
-        assert conn_type in ['socket', 'serial'], 'conn_type must be socket or serial'
+        assert conn_type in ['socket', 'serial', 'modbus_tcp'], 'conn_type must be socket, serial or modbus_tcp '
         if conn_type == 'socket':
             return HardConnSock(ip, port, **kwargs)
         elif conn_type == 'serial':
             return HardConnSerial(device, baud_rate, **kwargs)
+        elif conn_type == 'modbus_tcp':
+            return ModbusTcpClientConn(ip, port, **kwargs)
         else:
-            raise ValueError('conn_type must be socket or serial')
+            raise ValueError('conn_type must be socket, serial or modbus_tcp')
