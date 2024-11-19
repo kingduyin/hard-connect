@@ -140,6 +140,11 @@ def socket_connect_set_log_level_and_log_filename():
     )
     hard.send('>vcm upload(on)')
 ```
+## v0.3.2
+optimize log
+
+## v0.3.1 
+update default params
 
 ## v0.3.0
 add modbustcp

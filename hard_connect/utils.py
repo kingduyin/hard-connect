@@ -6,6 +6,7 @@
 @Date    ：2024/6/11 12:49 
 """
 import logging
+import copy
 import logging.config
 from typing import Union, Generator
 from collections import deque
@@ -47,9 +48,10 @@ class BaseConn(ABC):
         self.queue = DequeWithMaxLen(queue_max_length)
         self.logging_filename = logging_filename
         self.receive_generator = receive_generator
-        self.init_logging()
-        self.logger = logging.getLogger("hard_conn")
-        self.logger.setLevel(logging_level)
+        self.logger_name = f"hard_conn_{id(self)}" # dynmic generate logger
+        self.init_logging(logging_level)
+        self.logger = logging.getLogger(self.logger_name)
+        
         super().__init__()
 
     def __del__(self):
@@ -59,6 +61,15 @@ class BaseConn(ABC):
         """
         self.receive_generator and self.receive_generator.close()
         self.disconnect()
+        
+        logger = logging.getLogger(self.logger_name)
+
+        handlers = logger.handlers[:]
+        for handler in handlers:
+            handler.close()
+            logger.removeHandler(handler)
+
+        logging.Logger.manager.loggerDict.pop(self.logger_name, None)
 
     def __enter__(self):
         not self.conn and self.connect()
@@ -68,15 +79,26 @@ class BaseConn(ABC):
         self.receive_generator and self.receive_generator.close()
         self.disconnect()
 
-    def init_logging(self):
+    def init_logging(self, logging_level):
         """
         init logging
         :return:
         """
+
         from hard_connect.log import DEFAULT_LOGGING
+        custom_logging_config = copy.deepcopy(DEFAULT_LOGGING)
+        defined_handlers = list(custom_logging_config.get('handlers', {}).keys())    
         if self.logging_filename:
-            DEFAULT_LOGGING['handlers']['file']['filename'] = self.logging_filename
-        logging.config.dictConfig(DEFAULT_LOGGING)
+            custom_logging_config['handlers']['file']['filename'] = self.logging_filename
+            
+        custom_logging_config['loggers'][self.logger_name] = {
+            'handlers': defined_handlers,
+            'level': logging_level,
+            'propagate': False,
+        }
+
+        logging.config.dictConfig(custom_logging_config)
+
 
     @abstractmethod
     def connect(self):
